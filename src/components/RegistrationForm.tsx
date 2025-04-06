@@ -1,10 +1,10 @@
-import React from 'react';
-import {Formik, Form, Field, ErrorMessage} from "formik";
-import {object, string} from 'yup';
+
+import {Formik, Form, Field, ErrorMessage, FormikHelpers} from "formik";
+import {object, ObjectSchema, string} from 'yup';
 import "../src/scss/RegistrationForm.scss";
 
 const RegistrationForm = () => {
-    const RegistrationScheme = object().shape({
+    const RegistrationScheme: ObjectSchema<any> = object().shape({
         name: string()
             .min(2, "Name is too short, should be at least 2 characters")
             .max(50, "Name is too big, should be no more than 50 characters")
@@ -23,7 +23,7 @@ const RegistrationForm = () => {
             <Formik
                 initialValues={{name: "", email: "", password: ""}}
                 validationSchema={RegistrationScheme}
-                onSubmit={(values, {setSubmitting}) => {
+                onSubmit={(values:{name: string, email: string, password: string}, {setSubmitting}: FormikHelpers<any>) => {
                     console.log(values);
                     setSubmitting(false);
                 }
@@ -31,15 +31,15 @@ const RegistrationForm = () => {
                 {({ isSubmitting }) => (
                     <Form className="form">
                         <div className="form__item">
-                            <Field className="form__field" type="text" name="name" id="name" placeholder="Enter name" />
+                            <Field className="form__field" type="text" name="name" id="name" placeholder="Enter name" autoComplete="name" />
                             <ErrorMessage className="form__error" name="name" component="div" />
                         </div>
                         <div className="form__item">
-                            <Field className="form__field" type="text" name="email" id="email" placeholder="Enter email" />
+                            <Field className="form__field" type="text" name="email" id="email" placeholder="Enter email" autoComplete="email" />
                             <ErrorMessage className="form__error" name="email" component="div" />
                         </div>
                         <div className="form__item">
-                            <Field className="form__field" type="password" name="password" id="password" placeholder="Enter password" />
+                            <Field className="form__field" type="password" name="password" id="password" placeholder="Enter password" autoComplete="current-password" />
                             <ErrorMessage className="form__error" name="password" component="div" />
                         </div>
                         <button className="form__button" type="submit" disabled={isSubmitting}>Submit</button>
