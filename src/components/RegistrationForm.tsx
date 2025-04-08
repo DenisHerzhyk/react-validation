@@ -1,4 +1,4 @@
-
+import React from 'react';
 import {Formik, Form, Field, ErrorMessage, FormikHelpers} from "formik";
 import {object, ObjectSchema, string} from 'yup';
 import "../src/scss/RegistrationForm.scss";
