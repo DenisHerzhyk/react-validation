@@ -1,6 +1,9 @@
 import React from 'react';
 import {Formik, Form, Field, ErrorMessage, FormikHelpers} from "formik";
 import {object, ObjectSchema, string} from 'yup';
+import { PiNumberCircleOneBold } from "react-icons/pi";
+import { MdError } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
 
 const RegistrationForm = () => {
     const RegistrationScheme: ObjectSchema<any> = object().shape({
@@ -25,6 +28,12 @@ const RegistrationForm = () => {
                     : 'border-gray-300'
         }`
     }
+    const notifySubmit = () => {
+        toast.success("Form was submitted successfully");
+    }
+    const notifyError= () => {
+        toast.error("Form was not submitted, correct errors!");
+    }
     return (
         <>
             <Formik
@@ -32,13 +41,14 @@ const RegistrationForm = () => {
                 validationSchema={RegistrationScheme}
                 onSubmit={(values:{name: string, email: string, password: string}, {setSubmitting}: FormikHelpers<any>) => {
                     console.log(values);
+                    notifySubmit();
                     setSubmitting(false);
                 }}
             >
-                {({ isSubmitting}) => (
+                {({ isSubmitting, validateForm, submitForm}) => (
                     <div className="min-h-screen flex justify-center items-center">
                         <Form className="flex flex-col justify-center items-center gap-4 p-[80px] rounded-lg shadow-xl">
-                            <h1 className="text-4xl mb-[50px]">Registration Form <span className='underline decoration-wavy decoration-lime-500'>#1</span></h1>
+                            <h1 className="text-4xl mb-[50px]">Registration Form <PiNumberCircleOneBold className='inline-block text-lime-500 text-5xl' /></h1>
                             <div className="flex flex-col justify-center items-center gap-[10px]">
                                 <Field name="name">
                                     {props => (
@@ -55,7 +65,14 @@ const RegistrationForm = () => {
                                         />
                                     )}
                                 </Field>
-                                <ErrorMessage className="font-bold text-red-500" name="name" component="div" />
+                                <ErrorMessage className="font-bold text-red-500" name="name" component="div" >
+                                    {msg => (
+                                        <div className="font-bold text-red-500 flex items-center gap-2">
+                                        <MdError className="text-xl" />
+                                        {msg}
+                                      </div>
+                                    )}
+                                </ErrorMessage>
                             </div>
                             <div className="flex flex-col justify-center items-center gap-[10px]">
                                 <Field name="email">
@@ -74,7 +91,14 @@ const RegistrationForm = () => {
                                         />
                                     )}
                                 </Field>
-                                <ErrorMessage className="font-bold text-red-500" name="email" component="div" />
+                                <ErrorMessage className="font-bold text-red-500" name="email" component="div">
+                                    {msg => (
+                                        <div className="font-bold text-red-500 flex items-center gap-2">
+                                        <MdError className="text-xl" />
+                                        {msg}
+                                      </div>
+                                    )}
+                                </ErrorMessage>
                             </div>
                             <div className="flex flex-col justify-center items-center gap-[10px]">
                                 <Field name="password">
@@ -93,9 +117,23 @@ const RegistrationForm = () => {
                                         />
                                     )}
                                 </Field>
-                                <ErrorMessage className="font-bold text-red-500" name="password" component="div" />
+                                <ErrorMessage className="font-bold text-red-500" name="password" component="div">
+                                    {msg => (
+                                        <div className="font-bold text-red-500 flex items-center gap-2">
+                                        <MdError className="text-xl" />
+                                        {msg}
+                                      </div>
+                                    )}
+                                </ErrorMessage>
                             </div>
-                            <button className="inline-block transition ease-out bg-lime-300 hover:bg-lime-400 cursor-auto" type="submit" disabled={isSubmitting}>Submit</button>
+                            <button className="inline-block transition ease-out bg-lime-300 hover:bg-lime-400 cursor-auto" type="submit" disabled={isSubmitting}
+                            onClick={async() => {
+                                const errors = await validateForm();
+                                if (Object.keys(errors).length !== 0) {
+                                    notifyError();
+                                } 
+                            }}>Submit</button>
+                            <ToastContainer />
                         </Form>
                     </div>
                 )}
